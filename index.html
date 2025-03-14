@@ -140,23 +140,23 @@
         // Setup level
         function setupLevel(level) {
             const levelConfig = levels[level - 1];
-            
+        
             gameState.level = level;
             gameState.arrows = levelConfig.arrows;
             gameState.balloonsPopped = 0;
             gameState.arrow.flying = false;
-            
+        
             // Update UI
             levelEl.textContent = level;
             arrowsEl.textContent = levelConfig.arrows;
             balloonsEl.textContent = levelConfig.balloons;
-            
+        
             // Create balloons
             gameState.balloons = [];
             for (let i = 0; i < levelConfig.balloons; i++) {
                 const balloon = {
-                    x: (canvas.width / 2) + (i * 150) + Math.random() * 100,
-                    y: canvas.height / 2 - 150 - Math.random() * 100,
+                    x: Math.min(Math.max((canvas.width / 2) + (i * 150) + Math.random() * 100, 50), canvas.width - 50),
+                    y: Math.min(Math.max(canvas.height / 2 - 150 - Math.random() * 100, 50), canvas.height - 200),
                     radius: 35,
                     color: getRandomColor(),
                     speed: 0.5 + Math.random(),
@@ -168,7 +168,6 @@
                 gameState.balloons.push(balloon);
             }
         }
-
         // Draw functions combined for efficiency
         function draw() {
             // Clear canvas
@@ -412,36 +411,43 @@
             });
         }
 
-        // Update arrow
-        function updateArrow() {
-            if (gameState.arrow.flying) {
-                const arrowSpeedX = Math.cos(gameState.arrow.angle) * gameState.arrow.speed;
-                const arrowSpeedY = Math.sin(gameState.arrow.angle) * gameState.arrow.speed;
-                
-                // Apply minimum speed
-                const actualSpeedX = Math.abs(arrowSpeedX) < MIN_SPEED ? Math.sign(arrowSpeedX) * MIN_SPEED : arrowSpeedX;
-                const actualSpeedY = Math.abs(arrowSpeedY) < MIN_SPEED ? Math.sign(arrowSpeedY) * MIN_SPEED : arrowSpeedY;
-                
-                gameState.arrow.x += actualSpeedX;
-                gameState.arrow.y += actualSpeedY;
-                
-                // Adjust angle based on velocity
-                gameState.arrow.angle = Math.atan2(arrowSpeedY + GRAVITY, arrowSpeedX);
-                
-                // Apply reduced air resistance and gravity
-                gameState.arrow.speed *= 0.998;
-                gameState.arrow.y += GRAVITY * 0.4;
-                
-                // Check if arrow is out of bounds
-                if (isArrowOutOfBounds()) {
-                    gameState.arrow.flying = false;
-                    checkGameState();
-                }
-                
-                // Check collision with balloons
-                checkBalloonCollision();
+    // Update arrow
+    function updateArrow() {
+        if (gameState.arrow.flying) {
+            const arrowSpeedX = Math.cos(gameState.arrow.angle) * gameState.arrow.speed;
+            const arrowSpeedY = Math.sin(gameState.arrow.angle) * gameState.arrow.speed;
+    
+            // Apply minimum speed
+            const actualSpeedX = Math.abs(arrowSpeedX) < MIN_SPEED ? Math.sign(arrowSpeedX) * MIN_SPEED : arrowSpeedX;
+            const actualSpeedY = Math.abs(arrowSpeedY) < MIN_SPEED ? Math.sign(arrowSpeedY) * MIN_SPEED : arrowSpeedY;
+    
+            gameState.arrow.x += actualSpeedX;
+            gameState.arrow.y += actualSpeedY;
+    
+            // Adjust angle based on velocity
+            gameState.arrow.angle = Math.atan2(arrowSpeedY + GRAVITY, arrowSpeedX);
+    
+            // Apply reduced air resistance and gravity
+            gameState.arrow.speed *= 0.998;
+            gameState.arrow.y += GRAVITY * 0.4;
+    
+            // Check for collisions with walls or ground
+            if (gameState.arrow.x > canvas.width || gameState.arrow.x < 0) {
+                gameState.arrow.angle = Math.PI - gameState.arrow.angle;
+            } else if (gameState.arrow.y > canvas.height) {
+                gameState.arrow.angle = -gameState.arrow.angle;
             }
+    
+            // Check if arrow is out of bounds
+            if (isArrowOutOfBounds()) {
+                gameState.arrow.flying = false;
+                checkGameState();
+            }
+    
+            // Check collision with balloons
+            checkBalloonCollision();
         }
+    }
 
         // Check if arrow is out of bounds
         function isArrowOutOfBounds() {
