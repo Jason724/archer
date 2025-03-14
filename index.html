@@ -168,6 +168,7 @@
                 gameState.balloons.push(balloon);
             }
         }
+        
         // Draw functions combined for efficiency
         function draw() {
             // Clear canvas
@@ -188,10 +189,8 @@
             drawBow();
             
             // Draw arrow
-            function drawArrow() {
-                if (gameState.arrow.flying) {
-                 drawArrow();
-                }
+            if (gameState.arrow.flying) {
+                drawArrow();
             }
             
             // Draw balloons
@@ -284,38 +283,38 @@
         // Draw arrow
         function drawArrow() {
             const { x, y, angle, width, height } = gameState.arrow;
-            
+        
             ctx.save();
             ctx.translate(x, y);
             ctx.rotate(angle);
-            
+        
             // Arrow shaft
-            ctx.fillStyle = 'burlywood';
-            ctx.fillRect(0, -height/2, width, height);
-            
+            ctx.fillStyle = '#8B4513';  // Dark brown
+            ctx.fillRect(0, -height / 4, width * 3, height / 2);  // Skinnier and longer
+        
             // Arrow head
             ctx.beginPath();
-            ctx.moveTo(width, -height*1.5);
-            ctx.lineTo(width + 10, 0);
-            ctx.lineTo(width, height*1.5);
+            ctx.moveTo(width * 3, -height);
+            ctx.lineTo(width * 3 + 10, 0);
+            ctx.lineTo(width * 3, height);
             ctx.fillStyle = 'silver';
             ctx.fill();
-            
+        
             // Arrow fletching
             ctx.beginPath();
-            ctx.moveTo(0, -height);
-            ctx.lineTo(-5, -height*2);
-            ctx.lineTo(0, -height/2);
+            ctx.moveTo(0, -height / 2);
+            ctx.lineTo(-5, -height);
+            ctx.lineTo(0, 0);
             ctx.fillStyle = 'red';
             ctx.fill();
-            
+        
             ctx.beginPath();
-            ctx.moveTo(0, height);
-            ctx.lineTo(-5, height*2);
-            ctx.lineTo(0, height/2);
+            ctx.moveTo(0, height / 2);
+            ctx.lineTo(-5, height);
+            ctx.lineTo(0, 0);
             ctx.fillStyle = 'red';
             ctx.fill();
-            
+        
             ctx.restore();
         }
 
