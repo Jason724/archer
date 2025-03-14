@@ -411,44 +411,48 @@
             });
         }
 
-    // Update arrow
-    function updateArrow() {
-        if (gameState.arrow.flying) {
-            const arrowSpeedX = Math.cos(gameState.arrow.angle) * gameState.arrow.speed;
-            const arrowSpeedY = Math.sin(gameState.arrow.angle) * gameState.arrow.speed;
-    
-            // Apply minimum speed
-            const actualSpeedX = Math.abs(arrowSpeedX) < MIN_SPEED ? Math.sign(arrowSpeedX) * MIN_SPEED : arrowSpeedX;
-            const actualSpeedY = Math.abs(arrowSpeedY) < MIN_SPEED ? Math.sign(arrowSpeedY) * MIN_SPEED : arrowSpeedY;
-    
-            gameState.arrow.x += actualSpeedX;
-            gameState.arrow.y += actualSpeedY;
-    
-            // Adjust angle based on velocity
-            gameState.arrow.angle = Math.atan2(arrowSpeedY + GRAVITY, arrowSpeedX);
-    
-            // Apply reduced air resistance and gravity
-            gameState.arrow.speed *= 0.998;
-            gameState.arrow.y += GRAVITY * 0.4;
-    
-            // Check for collisions with walls or ground
-            if (gameState.arrow.x > canvas.width || gameState.arrow.x < 0) {
-                gameState.arrow.angle = Math.PI - gameState.arrow.angle;
-            } else if (gameState.arrow.y > canvas.height) {
-                gameState.arrow.angle = -gameState.arrow.angle;
+        // Update arrow
+        function updateArrow() {
+            if (gameState.arrow.flying) {
+                const arrowSpeedX = Math.cos(gameState.arrow.angle) * gameState.arrow.speed;
+                const arrowSpeedY = Math.sin(gameState.arrow.angle) * gameState.arrow.speed;
+        
+                // Apply minimum speed
+                const actualSpeedX = Math.abs(arrowSpeedX) < MIN_SPEED ? Math.sign(arrowSpeedX) * MIN_SPEED : arrowSpeedX;
+                const actualSpeedY = Math.abs(arrowSpeedY) < MIN_SPEED ? Math.sign(arrowSpeedY) * MIN_SPEED : arrowSpeedY;
+        
+                gameState.arrow.x += actualSpeedX;
+                gameState.arrow.y += actualSpeedY;
+        
+                // Adjust angle based on velocity
+                gameState.arrow.angle = Math.atan2(arrowSpeedY + GRAVITY, arrowSpeedX);
+        
+                // Apply reduced air resistance and gravity
+                gameState.arrow.speed *= 0.998;
+                gameState.arrow.y += GRAVITY * 0.4;
+        
+                // Check for collisions with walls or ground and bounce
+                if (gameState.arrow.x > canvas.width) {
+                    gameState.arrow.x = canvas.width;
+                    gameState.arrow.angle = Math.PI - gameState.arrow.angle;
+                } else if (gameState.arrow.x < 0) {
+                    gameState.arrow.x = 0;
+                    gameState.arrow.angle = Math.PI - gameState.arrow.angle;
+                } else if (gameState.arrow.y > canvas.height - 50) { // Adjust for ground height
+                    gameState.arrow.y = canvas.height - 50;
+                    gameState.arrow.angle = -gameState.arrow.angle;
+                }
+        
+                // Check if arrow is out of bounds
+                if (isArrowOutOfBounds()) {
+                    gameState.arrow.flying = false;
+                    checkGameState();
+                }
+        
+                // Check collision with balloons
+                checkBalloonCollision();
             }
-    
-            // Check if arrow is out of bounds
-            if (isArrowOutOfBounds()) {
-                gameState.arrow.flying = false;
-                checkGameState();
-            }
-    
-            // Check collision with balloons
-            checkBalloonCollision();
         }
-    }
-
         // Check if arrow is out of bounds
         function isArrowOutOfBounds() {
             return gameState.arrow.x > canvas.width || 
