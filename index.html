@@ -189,40 +189,9 @@
             
             // Draw arrow
             function drawArrow() {
-                const { x, y, angle, width, height } = gameState.arrow;
-            
-                ctx.save();
-                ctx.translate(x, y);
-                ctx.rotate(angle);
-            
-                // Arrow shaft
-                ctx.fillStyle = '#8B4513';  // Dark brown
-                ctx.fillRect(0, -height / 4, width * 2, height / 2);  // Skinnier and longer
-            
-                // Arrow head
-                ctx.beginPath();
-                ctx.moveTo(width * 2, -height);
-                ctx.lineTo(width * 2 + 10, 0);
-                ctx.lineTo(width * 2, height);
-                ctx.fillStyle = 'silver';
-                ctx.fill();
-            
-                // Arrow fletching
-                ctx.beginPath();
-                ctx.moveTo(0, -height / 2);
-                ctx.lineTo(-5, -height);
-                ctx.lineTo(0, 0);
-                ctx.fillStyle = 'red';
-                ctx.fill();
-            
-                ctx.beginPath();
-                ctx.moveTo(0, height / 2);
-                ctx.lineTo(-5, height);
-                ctx.lineTo(0, 0);
-                ctx.fillStyle = 'red';
-                ctx.fill();
-            
-                ctx.restore();
+                if (gameState.arrow.flying) {
+                 drawArrow();
+                }
             }
             
             // Draw balloons
