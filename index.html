@@ -189,9 +189,7 @@
             drawBow();
             
             // Draw arrow
-            if (gameState.arrow.flying) {
-                drawArrow();
-            }
+            drawArrow();
             
             // Draw balloons
             drawBalloons();
@@ -549,6 +547,13 @@
                 gameState.arrow.angle = gameState.bow.angle;
                 gameState.arrow.flying = true;
                 gameState.arrows--;
+
+                // Start the timer to reset the arrow after 2.5 seconds
+                setTimeout(() => {
+                    if (gameState.arrow.flying) {
+                        resetArrow();
+                        }
+                    }, 2500);
             }
             
             gameState.bow.isDrawing = false;
